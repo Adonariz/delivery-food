@@ -73,7 +73,7 @@ const onButtonOutClick = () => {
   checkAuth();
 };
 
-const authorised = () => {
+const isAuthorised = () => {
   authButton.style.display = `none`;
   buttonOut.style.display = `block`;
 
@@ -83,16 +83,16 @@ const authorised = () => {
   buttonOut.addEventListener(`click`, onButtonOutClick);
 };
 
-const notAuthorised = () => {
+const isNotAuthorised = () => {
   authButton.addEventListener(`click`, onAuthButtonClick);
   logInForm.addEventListener(`submit`, onLogInFormSubmit);
 };
 
 const checkAuth = () => {
   if (login) {
-    authorised();
+    isAuthorised();
   } else {
-    notAuthorised();
+    isNotAuthorised();
   }
 };
 
