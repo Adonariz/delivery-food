@@ -165,14 +165,18 @@ const onCardRestaurantsClick = (evt) => {
   const restaurant = target.closest(`.card-restaurant`);
 
   if (restaurant) {
-    containerPromo.classList.add(`hide`);
-    restaurants.classList.add(`hide`);
-    menu.classList.remove(`hide`);
+    if (login) {
+      containerPromo.classList.add(`hide`);
+      restaurants.classList.add(`hide`);
+      menu.classList.remove(`hide`);
 
-    cardsMenu.textContent = ``;
-    createCardGood();
+      cardsMenu.textContent = ``;
+      createCardGood();
 
-    logo.addEventListener(`click`, onLogoClick);
+      logo.addEventListener(`click`, onLogoClick);
+    } else {
+      onAuthButtonClick();
+    }
   }
 };
 
