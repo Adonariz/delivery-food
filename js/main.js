@@ -100,7 +100,7 @@ const checkAuth = () => {
 
 checkAuth();
 
-// day 2
+// day 2, 3
 
 const logo = document.querySelector(`.logo`);
 const containerPromo = document.querySelector(`.container-promo`);
@@ -108,13 +108,19 @@ const restaurants = document.querySelector(`.restaurants`);
 const cardsRestaurants = restaurants.querySelector(`.cards-restaurants`);
 const menu = document.querySelector(`.menu`);
 const cardsMenu = menu.querySelector(`.cards-menu`);
+const restaurantTitle = menu.querySelector(`.restaurant-title`);
+const rating = menu.querySelector(`.rating`);
+const minPrice = menu.querySelector(`.price`);
+const category = menu.querySelector(`.category`);
 
 const createCardRestaurant = (restaurant) => {
   const { image, kitchen, name, price, stars, products, time_of_delivery: timeOfDelivery } = restaurant;
 
   const card = `
-    <a class="card card-restaurant" data-products="${products}">
-      <img src="${image}" alt="image" class="card-image"/>
+    <a class="card card-restaurant" 
+    data-products="${products}" 
+    data-info="${[name, price, stars, kitchen]}">
+      <img src="${image}" alt="${name}" class="card-image"/>
       <div class="card-text">
         <div class="card-heading">
           <h3 class="card-title">${name}</h3>
@@ -137,7 +143,7 @@ const createCardGood = (product) => {
   card.className = `card`;
 
   const goodMarkup =
-    `<img src="${image}" alt="image" class="card-image"/>
+    `<img src="${image}" alt="${name}" class="card-image"/>
     <div class="card-text">
       <div class="card-heading">
           <h3 class="card-title card-title-reg">${name}</h3>
@@ -170,6 +176,14 @@ const onCardRestaurantsClick = (evt) => {
       menu.classList.remove(`hide`);
 
       cardsMenu.textContent = ``;
+
+      const restaurantInfo = restaurant.dataset.info.split(`,`);
+      [ titleInfo, priceInfo, ratingInfo, categoryInfo ] = restaurantInfo;
+
+      restaurantTitle.textContent = titleInfo;
+      rating.textContent = ratingInfo;
+      minPrice.textContent = `От ${priceInfo} ₽`;
+      category.textContent = categoryInfo;
 
       getData(`./db/${restaurant.dataset.products}`).then(function (data) {
         data.forEach(createCardGood);
