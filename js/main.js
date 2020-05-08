@@ -109,19 +109,21 @@ const cardsRestaurants = restaurants.querySelector(`.cards-restaurants`);
 const menu = document.querySelector(`.menu`);
 const cardsMenu = menu.querySelector(`.cards-menu`);
 
-const createCardRestaurant = () => {
+const createCardRestaurant = (restaurant) => {
+  const { image, kitchen, name, price, stars, products, time_of_delivery: timeOfDelivery } = restaurant;
+
   const card = `
-    <a class="card card-restaurant">
-      <img src="img/pizza-plus/preview.jpg" alt="image" class="card-image"/>
+    <a class="card card-restaurant" data-products="${products}">
+      <img src="${image}" alt="image" class="card-image"/>
       <div class="card-text">
         <div class="card-heading">
-          <h3 class="card-title">Пицца плюс</h3>
-          <span class="card-tag tag">50 мин</span>
+          <h3 class="card-title">${name}</h3>
+          <span class="card-tag tag">${timeOfDelivery}</span>
         </div>
         <div class="card-info">
-          <div class="rating">4.5</div>
-          <div class="price">От 900 ₽</div>
-          <div class="category">Пицца</div>
+          <div class="rating">${stars}</div>
+          <div class="price">От ${price}</div>
+          <div class="category">${kitchen}</div>
          </div>
       </div>
     </a>`;
@@ -129,35 +131,32 @@ const createCardRestaurant = () => {
   cardsRestaurants.insertAdjacentHTML(`beforeend`, card);
 };
 
-const createCardGood = () => {
+const createCardGood = (product) => {
+  const { name, description, price, image } = product;
   const card = document.createElement(`div`);
   card.className = `card`;
 
   const goodMarkup =
-    `<img src="img/pizza-plus/pizza-vesuvius.jpg" alt="image" class="card-image"/>
+    `<img src="${image}" alt="image" class="card-image"/>
     <div class="card-text">
       <div class="card-heading">
-          <h3 class="card-title card-title-reg">Пицца Везувий</h3>
+          <h3 class="card-title card-title-reg">${name}</h3>
       </div>
       <div class="card-info">
-        <div class="ingredients">Соус томатный, сыр «Моцарелла», ветчина, пепперони, перец
-          «Халапенье», соус «Тобаско», томаты.
-        </div>
+        <div class="ingredients">${description}</div>
       </div>
       <div class="card-buttons">
         <button class="button button-primary button-add-cart">
           <span class="button-card-text">В корзину</span>
           <span class="button-cart-svg"></span>
         </button>
-          <strong class="card-price-bold">545 ₽</strong>
+          <strong class="card-price-bold">${price}</strong>
       </div>
     </div>`;
 
   card.insertAdjacentHTML(`beforeend`, goodMarkup);
   cardsMenu.insertAdjacentElement(`beforeend`, card);
-}
-
-createCardRestaurant();
+};
 
 const onCardRestaurantsClick = (evt) => {
   evt.preventDefault();
@@ -171,7 +170,10 @@ const onCardRestaurantsClick = (evt) => {
       menu.classList.remove(`hide`);
 
       cardsMenu.textContent = ``;
-      createCardGood();
+
+      getData(`./db/${restaurant.dataset.products}`).then(function (data) {
+        data.forEach(createCardGood);
+      });
 
       logo.addEventListener(`click`, onLogoClick);
     } else {
@@ -188,3 +190,32 @@ const onLogoClick = () => {
 }
 
 cardsRestaurants.addEventListener(`click`, onCardRestaurantsClick);
+
+const mySwiper = new Swiper (`.swiper-container`, {
+  loop: true,
+  sliderPerView: 1,
+
+  autoplay: {
+    delay: 5000,
+  },
+});
+
+// day 3
+
+const getData = async function (url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Ошибка по адресу ${url}, код ошибки: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+const init = () => {
+  getData(`./db/partners.json`).then(function (data) {
+    data.forEach(createCardRestaurant);
+  });
+};
+
+init();
